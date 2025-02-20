@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Betting Page</title>
+    <style>
+        body { background-color: #000; color: white; text-align: center; font-family: Arial; }
+        h1 { color: #5dc5f5; }
+        .bet-form, .bet-history { margin-top: 20px; }
+        table { margin: auto; border-collapse: collapse; width: 60%; background-color: #111; }
+        th, td { border: 1px solid white; padding: 10px; }
+        th { background-color: #222; }
+    </style>
+</head>
+<body>
+    <h1>Place Your Bet</h1>
+    <p>Welcome, {{ user.username }}! Your bankroll: ${{ user.bankroll }}</p>
+
+    <div class="bet-form">
+        <form method="POST" action="{{ url_for('betting') }}">
+            <label>Team:</label>
+            <select name="team" required>
+                <option value="Team A">Team A</option>
+                <option value="Team B">Team B</option>
+            </select>
+            <label>Amount:</label>
+            <input type="number" name="amount" min="1" required>
+            <button type="submit">Place Bet</button>
+        </form>
+    
+        {% if error %}
+            <p style="color: red;">{{ error }}</p>
+        {% endif %}
+    </div>
+    
+    <div class="bet-history">
+        <h2>Bet History</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Team</th>
+                    <th>Amount</th>
+                    <th>Odds</th>
+                    <th>Result</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for bet in bets %}
+                    {% if bet.user.id == user.id %}
+                        <tr>
+                            <td>{{ bet.team }}</td>
+                            <td>${{ bet.amount }}</td>
+                            <td>{{ bet.odds }}x</td>
+                            <td>{{ bet.result_description }}</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div>
+        <a href="{{ url_for('settle_bets') }}"><button>Settle All Bets</button></a>
+    </div>
+
+    <p><a href="{{ url_for('home') }}">Back to Home</a></p>
+</body>
+</html>
