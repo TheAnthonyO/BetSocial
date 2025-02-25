@@ -61,7 +61,7 @@
                     <td>${{ bet.amount }}</td>
                     <td>{{ bet.odds }}x</td>
                     <td>{{ bet.result_description }}</td>
-                    <td>{{ bet.opponent_id and User.query.get(bet.opponent_id).username or '-' }}</td>
+                    <td>{{ bet.opponent_username }}</td>
                 </tr>
             {% endif %}
         {% endfor %}
