@@ -14,8 +14,7 @@ class BettingSystem:
         db.session.commit()
         return bet
 
-    def settle_bets(self):
-        winning_team = random.choice(["Team A", "Team B"])
+    def settle_bets(self, winning_team):
         for bet in Bet.query.filter_by(result=None).all():
             if bet.team == winning_team:
                 bet.result = 'win'
@@ -48,9 +47,19 @@ def betting():
     bets = Bet.query.all()
     return render_template('betting.html', user=user, bets=bets, friends=user.friends, error=error)
 
-@betting_bp.route('/settle_bets')
+@betting_bp.route('/settle_bets', methods=['GET', 'POST'])
 def settle_bets():
     if 'username' not in session:
         return redirect(url_for('login.home'))
-    betting_system.settle_bets()
-    return redirect(url_for('betting.betting'))
+    if request.method == 'POST':
+        winning_team = request.form['winning_team']
+        betting_system.settle_bets(winning_team)
+        return redirect(url_for('betting.betting'))
+    return '''
+    <form method="POST">
+        <label>Winning Team:</label>
+        <input type="text" name="winning_team" required>
+        <button type="submit">Settle Bets</button>
+    </form>
+    <p><a href="{{ url_for('betting.betting') }}">Back to Betting</a></p>
+    '''
