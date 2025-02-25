@@ -6,63 +6,50 @@
     <style>
         body { background-color: #000; color: white; text-align: center; font-family: Arial; }
         h1 { color: #5dc5f5; }
-        .bet-form, .bet-history { margin-top: 20px; }
         table { margin: auto; border-collapse: collapse; width: 60%; background-color: #111; }
         th, td { border: 1px solid white; padding: 10px; }
-        th { background-color: #222; }
     </style>
 </head>
 <body>
     <h1>Place Your Bet</h1>
     <p>Welcome, {{ user.username }}! Your bankroll: ${{ user.bankroll }}</p>
-
-    <div class="bet-form">
-        <form method="POST" action="{{ url_for('betting') }}">
-            <label>Team:</label>
-            <select name="team" required>
-                <option value="Team A">Team A</option>
-                <option value="Team B">Team B</option>
-            </select>
-            <label>Amount:</label>
-            <input type="number" name="amount" min="1" required>
-            <button type="submit">Place Bet</button>
-        </form>
-    
-        {% if error %}
-            <p style="color: red;">{{ error }}</p>
-        {% endif %}
-    </div>
-    
-    <div class="bet-history">
-        <h2>Bet History</h2>
-        <table>
-            <thead>
+    <form method="POST" action="{{ url_for('betting.betting') }}">
+        <label>Bet Type:</label>
+        <select name="bet_type">
+            <option value="solo">Solo</option>
+            <option value="vs_friend">Vs Friend</option>
+        </select>
+        <label>Friend (if vs):</label>
+        <select name="friend_id">
+            {% for friend in friends %}
+                <option value="{{ friend.id }}">{{ friend.username }}</option>
+            {% endfor %}
+        </select>
+        <label>Team:</label>
+        <input type="text" name="team" required>
+        <label>Amount:</label>
+        <input type="number" name="amount" min="1" required>
+        <button type="submit">Place Bet</button>
+    </form>
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+    <h2>Bet History</h2>
+    <table>
+        <tr><th>Team</th><th>Amount</th><th>Odds</th><th>Result</th><th>Vs</th></tr>
+        {% for bet in bets %}
+            {% if bet.user_id == user.id %}
                 <tr>
-                    <th>Team</th>
-                    <th>Amount</th>
-                    <th>Odds</th>
-                    <th>Result</th>
+                    <td>{{ bet.team }}</td>
+                    <td>${{ bet.amount }}</td>
+                    <td>{{ bet.odds }}x</td>
+                    <td>{{ bet.result_description }}</td>
+                    <td>{{ bet.opponent_id and User.query.get(bet.opponent_id).username or '-' }}</td>
                 </tr>
-            </thead>
-            <tbody>
-                {% for bet in bets %}
-                    {% if bet.user.id == user.id %}
-                        <tr>
-                            <td>{{ bet.team }}</td>
-                            <td>${{ bet.amount }}</td>
-                            <td>{{ bet.odds }}x</td>
-                            <td>{{ bet.result_description }}</td>
-                        </tr>
-                    {% endif %}
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
-    <div>
-        <a href="{{ url_for('settle_bets') }}"><button>Settle All Bets</button></a>
-    </div>
-
-    <p><a href="{{ url_for('home') }}">Back to Home</a></p>
+            {% endif %}
+        {% endfor %}
+    </table>
+    <p><a href="{{ url_for('betting.settle_bets') }}">Settle Bets</a></p>
+    <p><a href="{{ url_for('login.home') }}">Back to Home</a></p>
 </body>
 </html>

@@ -7,30 +7,23 @@ friendship = db.Table('friendship',
     db.Column('friend_id', db.Integer, db.ForeignKey('user.id'), primary_key=True)
 )
 
-group_membership = db.Table('group_membership',
-    db.Column('group_id', db.Integer, db.ForeignKey('betting_group.id'), primary_key=True),
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True)
-)
-
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(20), unique=True, nullable=False)
-    password = db.Column(db.String(10), nullable=False)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    password = db.Column(db.String(100), nullable=False)
     bankroll = db.Column(db.Float, default=1000.0)
     friends = db.relationship('User', secondary=friendship,
                               primaryjoin=(friendship.c.user_id == id),
                               secondaryjoin=(friendship.c.friend_id == id))
                               
-                              
+
     def update_bankroll(self, amount):
-        """ Updates user's bankroll (positive or negative). """
         self.bankroll += amount
         if self.bankroll <= 0:
-            self.reset_bankroll()
+            self.bankroll = 500
         db.session.commit()
-
+    
     def reset_bankroll(self):
-        """ Resets bankroll when it reaches 0. """
         self.bankroll = 500
         db.session.commit()
 
@@ -41,21 +34,5 @@ class Message(db.Model):
     content = db.Column(db.String(500), nullable=False)
     timestamp = db.Column(db.DateTime, default=db.func.now())
 
-class Bet(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    team = db.Column(db.String(50), nullable=False)
-    amount = db.Column(db.Float, nullable=False)
-    odds = db.Column(db.Float, default=2.0)
-    result = db.Column(db.String(10))  # 'win', 'lose', or None
-    result_description = db.Column(db.String(50), default="Pending")
-    bet_type = db.Column(db.String(20))  # 'solo', 'vs_friend', 'group'
-    opponent_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
-    group_id = db.Column(db.Integer, db.ForeignKey('betting_group.id'), nullable=True)
-
-class BettingGroup(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False)
-    creator_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    members = db.relationship('User', secondary='group_membership')
+    
 

@@ -13,7 +13,7 @@
     <p>Produced by Anthony Ortiz & Caleb Cramer</p>
     {% if 'username' in session %}
         <p>Welcome, {{ user.username }}! Your bankroll: ${{ user.bankroll }}</p>
-        <p><a href="{{ url_for('friends.friends') }}">Friends</a></p>
+        <p><a href="{{ url_for('friends.friends') }}">Friends</a> | <a href="{{ url_for('betting.betting') }}">Betting</a></p>
         <a href="{{ url_for('login.logout') }}"><button>Logout</button></a>
     {% else %}
         <form method="POST" action="{{ url_for('login.login') }}">
