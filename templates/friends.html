@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Friends</title>
+    <style>
+        body { background-color: #000; color: white; font-family: Arial; text-align: center; }
+        h1 { color: #5dc5f5; }
+    </style>
+</head>
+<body>
+    <h1>Friends</h1>
+    <p>Welcome, {{ user.username }}!</p>
+    <h2>Your Friends</h2>
+    <form method="POST">
+        <input type="text" name="friend_username" placeholder="Add Friend" required>
+        <button type="submit" name="add_friend">Add</button>
+    </form>
+    <ul>
+        {% for friend in friends %}
+            <li>{{ friend.username }}</li>
+        {% endfor %}
+    </ul>
+    <h2>Messages</h2>
+    <form method="POST">
+        <select name="receiver_id">
+            {% for friend in friends %}
+                <option value="{{ friend.id }}">{{ friend.username }}</option>
+            {% endfor %}
+        </select>
+        <input type="text" name="message" placeholder="Type a message" required>
+        <button type="submit">Send</button>
+    </form>
+    <ul>
+        {% for msg in messages %}
+            <li>{{ msg.sender_id == user.id and 'You' or User.query.get(msg.sender_id).username }} to 
+                {{ msg.receiver_id == user.id and 'You' or User.query.get(msg.receiver_id).username }}: 
+                {{ msg.content }} ({{ msg.timestamp }})</li>
+        {% endfor %}
+    </ul>
+    <p><a href="{{ url_for('login.home') }}">Back to Home</a></p>
+</body>
+</html>
