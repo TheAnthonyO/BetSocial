@@ -1,6 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session
 from models import db, User, Bet
-import random
 
 betting_bp = Blueprint('betting', __name__)
 
@@ -29,6 +28,15 @@ class BettingSystem:
 
 betting_system = BettingSystem()
 
+# List of NBA games (as of Feb 24, 2025, fictional matchups for demo)
+NBA_GAMES = [
+    {"team1": "Boston Celtics", "team2": "Los Angeles Lakers"},
+    {"team1": "Oklahoma City Thunder", "team2": "Denver Nuggets"},
+    {"team1": "Cleveland Cavaliers", "team2": "New York Knicks"},
+    {"team1": "Philadelphia 76ers", "team2": "Miami Heat"},
+    {"team1": "Golden State Warriors", "team2": "Dallas Mavericks"}
+]
+
 @betting_bp.route('/betting', methods=['GET', 'POST'])
 def betting():
     if 'username' not in session:
@@ -39,13 +47,13 @@ def betting():
         team = request.form['team']
         amount = float(request.form['amount'])
         bet_type = request.form.get('bet_type', 'solo')
-        odds = 2.5 if bet_type == 'vs_friend' else 2.0
-        opponent_id = int(request.form['friend_id']) if bet_type == 'vs_friend' else None
+        odds = 2.0  # All odds are 2x
+        opponent_id = int(request.form['friend_id']) if bet_type == 'vs_friend' and 'friend_id' in request.form else None
         bet = betting_system.place_bet(user, team, amount, odds, bet_type, opponent_id)
         if not bet:
             error = "Insufficient funds."
     bets = Bet.query.all()
-    return render_template('betting.html', user=user, bets=bets, friends=user.friends, error=error)
+    return render_template('betting.html', user=user, bets=bets, friends=user.friends, error=error, games=NBA_GAMES)
 
 @betting_bp.route('/settle_bets', methods=['GET', 'POST'])
 def settle_bets():

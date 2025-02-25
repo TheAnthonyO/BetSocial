@@ -13,27 +13,44 @@
 <body>
     <h1>Place Your Bet</h1>
     <p>Welcome, {{ user.username }}! Your bankroll: ${{ user.bankroll }}</p>
-    <form method="POST" action="{{ url_for('betting.betting') }}">
-        <label>Bet Type:</label>
-        <select name="bet_type">
-            <option value="solo">Solo</option>
-            <option value="vs_friend">Vs Friend</option>
-        </select>
-        <label>Friend (if vs):</label>
-        <select name="friend_id">
-            {% for friend in friends %}
-                <option value="{{ friend.id }}">{{ friend.username }}</option>
-            {% endfor %}
-        </select>
-        <label>Team:</label>
-        <input type="text" name="team" required>
-        <label>Amount:</label>
-        <input type="number" name="amount" min="1" required>
-        <button type="submit">Place Bet</button>
-    </form>
+    
+    <h2>Available Games</h2>
+    <table>
+        <tr><th>Matchup</th><th>Bet</th></tr>
+        {% for game in games %}
+            <tr>
+                <td>{{ game.team1 }} vs {{ game.team2 }}</td>
+                <td>
+                    <form method="POST" action="{{ url_for('betting.betting') }}">
+                        <select name="team">
+                            <option value="{{ game.team1 }}">{{ game.team1 }} (2x odds)</option>
+                            <option value="{{ game.team2 }}">{{ game.team2 }} (2x odds)</option>
+                        </select>
+                        <input type="number" name="amount" min="1" placeholder="Amount" required>
+                        <button type="submit">Bet Solo</button>
+                    </form>
+                    <form method="POST" action="{{ url_for('betting.betting') }}" style="margin-top: 5px;">
+                        <input type="hidden" name="bet_type" value="vs_friend">
+                        <select name="team">
+                            <option value="{{ game.team1 }}">{{ game.team1 }} (2x odds)</option>
+                            <option value="{{ game.team2 }}">{{ game.team2 }} (2x odds)</option>
+                        </select>
+                        <select name="friend_id">
+                            {% for friend in friends %}
+                                <option value="{{ friend.id }}">{{ friend.username }}</option>
+                            {% endfor %}
+                        </select>
+                        <input type="number" name="amount" min="1" placeholder="Amount" required>
+                        <button type="submit">Bet vs Friend</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
     {% if error %}
         <p style="color: red;">{{ error }}</p>
     {% endif %}
+    
     <h2>Bet History</h2>
     <table>
         <tr><th>Team</th><th>Amount</th><th>Odds</th><th>Result</th><th>Vs</th></tr>
@@ -49,6 +66,7 @@
             {% endif %}
         {% endfor %}
     </table>
+    
     <p><a href="{{ url_for('betting.settle_bets') }}">Settle Bets</a></p>
     <p><a href="{{ url_for('login.home') }}">Back to Home</a></p>
 </body>
