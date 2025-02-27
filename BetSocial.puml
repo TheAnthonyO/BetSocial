@@ -1,0 +1,97 @@
+@startuml
+skinparam backgroundColor transparent
+skinparam classAttributeIconSize 0
+
+class App {
+  -secret_key: str
+  -SQLALCHEMY_DATABASE_URI: str
+  -SQLALCHEMY_TRACK_MODIFICATIONS: bool
+  +run(debug=True)
+}
+
+class Login_BP {
+  +home()
+  +login()
+  +logout()
+  +register()
+  +deposit_withdraw()
+}
+
+class Friends_BP {
+  +friends()
+}
+
+class Betting_BP {
+  +betting()
+  +settle_bets()
+}
+
+class BettingSystem {
+  +place_bet(user, team, amount, odds, bet_type, opponent_id)
+  +settle_bets(winning_team)
+}
+
+class User {
+  -id: int
+  -username: str
+  -password: str
+  -bankroll: float
+  +update_bankroll(amount)
+}
+
+class Message {
+  -id: int
+  -sender_id: int
+  -receiver_id: int
+  -content: str
+  -timestamp: datetime
+}
+
+class Bet {
+  -id: int
+  -user_id: int
+  -team: str
+  -amount: float
+  -odds: float
+  -result: str
+  -result_description: str
+  -bet_type: str
+  -opponent_id: int
+}
+
+class FriendRequest {
+  -id: int
+  -sender_id: int
+  -receiver_id: int
+  -status: str
+}
+
+class Index.html
+class Betting.html
+class Friends.html
+
+App o--> Login_BP : 
+App o--> Friends_BP : 
+App o--> Betting_BP : 
+
+Login_BP .> User : 
+Friends_BP .> User : 
+Friends_BP .> Message : 
+Friends_BP .> FriendRequest : 
+Betting_BP .> User : 
+Betting_BP .> Bet : 
+Betting_BP .> BettingSystem : 
+
+User "1" -- "0..*" Message : 
+User "1" -- "0..*" Bet : 
+User "1" -- "0..*" FriendRequest :
+User "1" -- "0..*" User : 
+
+BettingSystem .> User : 
+BettingSystem .> Bet : 
+
+Login_BP .> Index.html : 
+Friends_BP .> Friends.html : 
+Betting_BP .> Betting.html : 
+
+@enduml
