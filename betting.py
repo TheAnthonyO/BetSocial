@@ -10,7 +10,7 @@ betting_bp = Blueprint('betting', __name__)
 class BettingSystem:
     # Method to place a bet for a user
     def place_bet(self, user, team, amount, odds=2.0, bet_type='solo', opponent_id=None):
-        """Place a bet, deducting the amount from the user's bankroll if sufficient funds exist."""
+         #Place a bet, deducting the amount from the user's bankroll if sufficient funds exist. 
         # Check if the user has enough funds for the bet
         if user.bankroll < amount:
             return None  # Return None to indicate insufficient funds
@@ -26,7 +26,7 @@ class BettingSystem:
 
     # Method to settle all pending bets based on a winning team
     def settle_bets(self, winning_team):
-        """Settle all unresolved bets, updating results and bankrolls based on the winning team."""
+         #Settle all unresolved bets, updating results and bankrolls based on the winning team. 
         # Iterate over all bets that haven’t been settled yet
         for bet in Bet.query.filter_by(result=None).all():
             if bet.team == winning_team:
@@ -50,7 +50,7 @@ class BettingSystem:
 # Instantiate the BettingSystem class for use in routes
 betting_system = BettingSystem()
 
-# Define a static list of NBA games for betting (fictional matchups as of Feb 24, 2025)
+# Define a static list of NBA games for betting
 NBA_GAMES = [
     {"team1": "Boston Celtics", "team2": "Los Angeles Lakers"},
     {"team1": "Oklahoma City Thunder", "team2": "Denver Nuggets"},
@@ -62,7 +62,7 @@ NBA_GAMES = [
 # Route to handle the betting page, supporting both GET (display) and POST (bet placement)
 @betting_bp.route('/betting', methods=['GET', 'POST'])
 def betting():
-    """Handle the betting page: display games and history, process new bets."""
+     #Handle the betting page: display games and history, process new bets. 
     # Redirect to home if the user isn’t logged in
     if 'username' not in session:
         return redirect(url_for('login.home'))
@@ -109,7 +109,7 @@ def betting():
 # Route to handle settling bets, supporting both GET (form display) and POST (settlement)
 @betting_bp.route('/settle_bets', methods=['GET', 'POST'])
 def settle_bets():
-    """Handle settling all pending bets based on a user-specified winning team."""
+     #Handle settling all pending bets based on a user-specified winning team. 
     # Redirect to home if the user isn’t logged in
     if 'username' not in session:
         return redirect(url_for('login.home'))

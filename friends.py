@@ -9,7 +9,7 @@ friends_bp = Blueprint('friends', __name__)
 # Route for the friends page, handling both GET (display) and POST (actions)
 @friends_bp.route('/friends', methods=['GET', 'POST'])
 def friends():
-    """Handle the friends page: display friends, requests, messages, and process actions."""
+    #Handle the friends page: display friends, requests, messages, and process actions.
     # Redirect to home if the user isn’t logged in
     if 'username' not in session:
         return redirect(url_for('login.home'))
