@@ -20,14 +20,16 @@ def home():
 # Route to handle login form submissions (POST only)
 @login_bp.route('/login', methods=['POST'])
 def login():
+    error = None
     # Get username and password from the form
     username = request.form['username']
     password = request.form['password']
     # Look up the user in the database by username
     user = User.query.filter_by(username=username).first()
-    # If user doesn’t exist or password is wrong, return an error message
+    # If user doesn't exist or password is wrong, return an error message
     if not user or user.password != password:
-        return "Invalid credentials."
+        error = "Invalid username or password."
+        return render_template('index.html', error=error)
     # Store username in session to keep user logged in
     session['username'] = user.username
     # Redirect to the homepage after successful login
@@ -44,6 +46,7 @@ def logout():
 # Route for user registration, handling both GET (form display) and POST (form submission)
 @login_bp.route('/register', methods=['GET', 'POST'])
 def register():
+    error = None
     # If form is submitted (POST request)
     if request.method == 'POST':
         # Get username and password from the form
@@ -51,23 +54,20 @@ def register():
         password = request.form['password']
         # Check if username is already taken
         if User.query.filter_by(username=username).first():
-            return "Username already exists."
-        # Create a new user with the provided credentials
-        new_user = User(username=username, password=password)
-        # Add the new user to the database session
-        db.session.add(new_user)
-        # Commit the changes to save the user
-        db.session.commit()
-        # Redirect to the homepage after registration
-        return redirect(url_for('login.home'))
-    # If GET request, return a simple HTML form for registration
-    return '''
-    <form method="POST">
-        Username: <input type="text" name="username" required><br>
-        Password: <input type="password" name="password" required><br>
-        <button type="submit">Register</button>
-    </form>
-    '''
+            error = "Username already exists."
+        else:
+            # Create a new user with the provided credentials
+            new_user = User(username=username, password=password)
+            # Add the new user to the database session
+            db.session.add(new_user)
+            # Commit the changes to save the user
+            db.session.commit()
+            # Log the user in by storing username in session
+            session['username'] = username
+            # Redirect to the homepage after registration
+            return redirect(url_for('login.home'))
+    # If GET request or registration failed, return the registration template
+    return render_template('register.html', error=error)
 
 # Route to handle deposit and withdrawal actions (POST only)
 @login_bp.route('/deposit_withdraw', methods=['POST'])

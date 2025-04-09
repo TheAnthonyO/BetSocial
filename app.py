@@ -11,7 +11,7 @@ app = Flask(__name__)
 app.secret_key = 'supersecretkey'
 # Configure the database URI to use SQLite, storing the file in the 'instance' directory relative to app.py
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(os.path.abspath(os.path.dirname(__file__)), 'instance', 'fantasy_football.db')
-# Disable SQLAlchemy's modification tracking to save resources (we don’t need it here)
+# Disable SQLAlchemy's modification tracking to save resources (we don't need it here)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize the SQLAlchemy database with the Flask app, linking them together
@@ -26,7 +26,7 @@ app.register_blueprint(betting_bp)
 
 # Create an application context to allow database operations (like creating tables) outside a request
 with app.app_context():
-    # Create all database tables defined in models.py if they don’t already exist
+    # Create all database tables defined in models.py if they don't already exist
     db.create_all()
 
 # Check if this script is run directly (not imported), and if so, start the Flask development server

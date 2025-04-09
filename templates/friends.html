@@ -1,59 +1,237 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Friends</title>
+    <meta charset="UTF-8">
+    <title>Friends - BetSocial</title>
     <style>
-        body { background-color: #000; color: white; font-family: Arial; text-align: center; }
-        h1 { color: #5dc5f5; }
+        :root {
+            --light-blue: #00bfff;
+            --dark-bg: #000000;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--dark-bg);
+            color: white;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .container {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        h1, h2 {
+            color: var(--light-blue);
+            text-align: center;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 10px rgba(0, 191, 255, 0.3);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+        }
+
+        .user-info {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background-color: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            border: 2px solid var(--light-blue);
+        }
+
+        .section-container {
+            background-color: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 191, 255, 0.2);
+            border: 2px solid var(--light-blue);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .friend-request-form {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        input, select {
+            padding: 0.75rem;
+            border: 1px solid var(--light-blue);
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            min-width: 200px;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: white;
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.3);
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            background-color: var(--light-blue);
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0099cc;
+            transform: translateY(-2px);
+        }
+
+        .friend-list, .request-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .friend-list li, .request-list li {
+            padding: 1rem;
+            margin: 0.5rem 0;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .request-list li form {
+            display: inline;
+        }
+
+        .message-form {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .message-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .message-list li {
+            padding: 1rem;
+            margin: 0.5rem 0;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+        }
+
+        .message-timestamp {
+            color: var(--light-blue);
+            font-size: 0.8rem;
+            margin-left: 1rem;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .nav-buttons a {
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
-    <h1>Friends</h1>
-    <p>Welcome, {{ user.username }}!</p>
-    
-    <h2>Send Friend Request</h2>
-    <form method="POST">
-        <input type="text" name="friend_username" placeholder="Friend's Username" required>
-        <button type="submit" name="send_request">Send Request</button>
-    </form>
-    
-    <h2>Pending Friend Requests</h2>
-    <ul>
-        {% for req in pending_requests %}
-            <li>{{ req.sender_username }} wants to be your friend
-                <form method="POST" style="display:inline;">
-                    <input type="hidden" name="request_id" value="{{ req.id }}">
-                    <button type="submit" name="accept_request">Accept</button>
-                </form>
-            </li>
-        {% endfor %}
-    </ul>
-    
-    <h2>Your Friends</h2>
-    <ul>
-        {% for friend in friends %}
-            <li>{{ friend.username }}</li>
-        {% endfor %}
-    </ul>
-    
-    <h2>Messages</h2>
-    <form method="POST">
-        <select name="receiver_id">
-            {% for friend in friends %}
-                <option value="{{ friend.id }}">{{ friend.username }}</option>
-            {% endfor %}
-        </select>
-        <input type="text" name="message" placeholder="Type a message" required>
-        <button type="submit">Send</button>
-    </form>
-    <ul>
-        {% for msg in messages %}
-            <li>{{ msg.is_from_user and 'You' or msg.sender_username }} to 
-                {{ msg.is_to_user and 'You' or msg.receiver_username }}: 
-                {{ msg.content }} ({{ msg.timestamp }})</li>
-        {% endfor %}
-    </ul>
-    
-    <p><a href="{{ url_for('login.home') }}">Back to Home</a></p>
+    <div class="container">
+        <h1>Friends</h1>
+        
+        <div class="user-info">
+            <h2>Welcome, {{ user.username }}!</h2>
+        </div>
+
+        <div class="section-container">
+            <h2>Send Friend Request</h2>
+            <form method="POST" class="friend-request-form">
+                <input type="text" name="friend_username" placeholder="Friend's Username" required>
+                <button type="submit" name="send_request">Send Request</button>
+            </form>
+        </div>
+
+        {% if pending_requests %}
+        <div class="section-container">
+            <h2>Pending Friend Requests</h2>
+            <ul class="request-list">
+                {% for req in pending_requests %}
+                    <li>
+                        {{ req.sender_username }} wants to be your friend
+                        <form method="POST" style="display:inline;">
+                            <input type="hidden" name="request_id" value="{{ req.id }}">
+                            <button type="submit" name="accept_request">Accept</button>
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <div class="section-container">
+            <h2>Your Friends</h2>
+            {% if friends %}
+                <ul class="friend-list">
+                    {% for friend in friends %}
+                        <li>{{ friend.username }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p style="text-align: center;">No friends yet. Send some friend requests!</p>
+            {% endif %}
+        </div>
+
+        <div class="section-container">
+            <h2>Messages</h2>
+            <form method="POST" class="message-form">
+                <select name="receiver_id">
+                    {% for friend in friends %}
+                        <option value="{{ friend.id }}">{{ friend.username }}</option>
+                    {% endfor %}
+                </select>
+                <input type="text" name="message" placeholder="Type a message" required>
+                <button type="submit">Send</button>
+            </form>
+
+            {% if messages %}
+                <ul class="message-list">
+                    {% for msg in messages %}
+                        <li>
+                            <strong>{{ msg.is_from_user and 'You' or msg.sender_username }}</strong> to 
+                            <strong>{{ msg.is_to_user and 'You' or msg.receiver_username }}</strong>: 
+                            {{ msg.content }}
+                            <span class="message-timestamp">({{ msg.timestamp }})</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p style="text-align: center;">No messages yet. Start a conversation!</p>
+            {% endif %}
+        </div>
+
+        <div class="nav-buttons">
+            <a href="{{ url_for('login.home') }}"><button>Back to Home</button></a>
+        </div>
+    </div>
 </body>
 </html>

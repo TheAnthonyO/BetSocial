@@ -20,7 +20,7 @@ class User(db.Model):
     username = db.Column(db.String(50), unique=True, nullable=False)
     # Password, stored as plaintext (should be hashed in production)
     password = db.Column(db.String(100), nullable=False)
-    # User’s betting funds, defaults to 1000
+    # User's betting funds, defaults to 1000
     bankroll = db.Column(db.Float, default=1000.0)
     # Many-to-many relationship with other Users via friendship table
     friends = db.relationship('User', secondary=friendship,
@@ -28,7 +28,7 @@ class User(db.Model):
                               secondaryjoin=(friendship.c.friend_id == id),
                               backref=db.backref('friend_of', lazy='dynamic'), lazy='dynamic')
 
-    # Method to update the user’s bankroll (positive for deposit/win, negative for withdrawal/bet)
+    # Method to update the user's bankroll (positive for deposit/win, negative for withdrawal/bet)
     def update_bankroll(self, amount):
         self.bankroll += amount
         # Reset to 500 if bankroll drops to 0 or below
@@ -40,16 +40,16 @@ class User(db.Model):
 class Message(db.Model):
     # Unique identifier for each message
     id = db.Column(db.Integer, primary_key=True)
-    # Foreign key linking to the sender’s User.id
+    # Foreign key linking to the sender's User.id
     sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    # Foreign key linking to the receiver’s User.id
+    # Foreign key linking to the receiver's User.id
     receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     # Message content, max 500 characters
     content = db.Column(db.String(500), nullable=False)
     # Timestamp of when the message was sent, defaults to current time
     timestamp = db.Column(db.DateTime, default=db.func.now())
 
-# Bet model representing a user’s wager
+# Bet model representing a user's wager
 class Bet(db.Model):
     # Unique identifier for each bet
     id = db.Column(db.Integer, primary_key=True)
@@ -67,16 +67,18 @@ class Bet(db.Model):
     result_description = db.Column(db.String(50), default="Pending")
     # Type of bet: 'solo' or 'vs_friend'
     bet_type = db.Column(db.String(20))  # 'solo', 'vs_friend'
-    # Optional foreign key linking to opponent’s User.id for vs_friend bets
+    # Optional foreign key linking to opponent's User.id for vs_friend bets
     opponent_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    # ID of the game this bet is associated with
+    game_id = db.Column(db.Integer, nullable=True)
 
 # FriendRequest model for managing friend request states
 class FriendRequest(db.Model):
     # Unique identifier for each friend request
     id = db.Column(db.Integer, primary_key=True)
-    # Foreign key linking to the sender’s User.id
+    # Foreign key linking to the sender's User.id
     sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    # Foreign key linking to the receiver’s User.id
+    # Foreign key linking to the receiver's User.id
     receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     # Status of the request: 'pending', 'accepted', 'rejected'
     status = db.Column(db.String(20), default='pending')
