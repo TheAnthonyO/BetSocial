@@ -47,12 +47,9 @@ class OddsAPI:
     def get_upcoming_games(self):
         """Fetch upcoming games for the next 7 days"""
         try:
-            # Get today's date in UTC
             today = datetime.now(pytz.UTC)
-            # Get date 7 days from now
             next_week = today + timedelta(days=7)
             
-            # Format dates for API in ISO format with UTC timezone
             today_str = today.strftime("%Y-%m-%dT%H:%M:%SZ")
             next_week_str = next_week.strftime("%Y-%m-%dT%H:%M:%SZ")
             
@@ -66,16 +63,11 @@ class OddsAPI:
                 "commenceTimeFrom": today_str,
                 "commenceTimeTo": next_week_str
             }
-            print(f"Fetching upcoming games from: {url}")
+            
             response = requests.get(url, params=params)
-            print(f"Upcoming games response status: {response.status_code}")
             
             if response.status_code == 200:
-                games = self._process_games_by_status(response.json(), 'upcoming')
-                print(f"Found {len(games)} upcoming games")
-                return games
-            else:
-                print(f"Error response: {response.text}")
+                return self._process_games_by_status(response.json(), 'upcoming')
             return []
         except Exception as e:
             print(f"Error fetching upcoming games: {str(e)}")
@@ -89,21 +81,16 @@ class OddsAPI:
         
         for game in data:
             try:
-                # Convert commence_time to datetime with UTC timezone
                 game_time = datetime.fromisoformat(game['commence_time'].replace('Z', '+00:00'))
                 
-                # Determine game status
                 if game_time > current_time:
                     status = 'upcoming'
                 else:
                     status = 'in_progress'
                 
-                # Only process games with matching status
                 if status == status_filter:
-                    # Get the best odds from available bookmakers
                     best_odds = self._get_best_odds(game.get('bookmakers', []), game)
                     
-                    # Convert game time to Eastern Time and format in 12-hour format
                     eastern_time = game_time.astimezone(eastern_tz)
                     formatted_time = eastern_time.strftime("%Y-%m-%d %I:%M %p")
                     
@@ -115,20 +102,17 @@ class OddsAPI:
                         'odds': best_odds
                     }
                     
-                    # Add status-specific data
                     if status_filter == 'in_progress':
                         game_data['status'] = 'live'
                         game_data['score'] = {
                             'team1': game.get('scores', {}).get('home', 0),
                             'team2': game.get('scores', {}).get('away', 0)
                         }
-                    else:  # upcoming
+                    else:
                         game_data['status'] = 'scheduled'
                     
                     processed_games.append(game_data)
             except Exception as e:
-                print(f"Error processing game: {str(e)}")
-                print(f"Game data: {game}")
                 continue
                 
         return processed_games

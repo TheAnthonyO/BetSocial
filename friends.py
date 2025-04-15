@@ -9,7 +9,7 @@ friends_bp = Blueprint('friends', __name__)
 # Route for the friends page, handling both GET (display) and POST (actions)
 @friends_bp.route('/friends', methods=['GET', 'POST'])
 def friends():
-    # Redirect to home if user isn’t logged in
+    # Redirect to home if user isn't logged in
     if 'username' not in session:
         return redirect(url_for('login.home'))
     # Fetch the current user
@@ -21,7 +21,7 @@ def friends():
         if 'send_request' in request.form:
             friend_username = request.form['friend_username']
             friend = User.query.filter_by(username=friend_username).first()
-            # Ensure friend exists, isn’t the user, and isn’t already a friend
+            # Ensure friend exists, isn't the user, and isn't already a friend
             if friend and friend != user and friend not in user.friends:
                 # Check for existing pending request
                 existing_request = FriendRequest.query.filter_by(sender_id=user.id, receiver_id=friend.id, status='pending').first()
@@ -40,7 +40,10 @@ def friends():
                 # Only add to friends if not already friends
                 if friend and friend not in user.friends:
                     friend_request.status = 'accepted'
+                    # Add friend to user's friends list
                     user.friends.append(friend)
+                    # Add user to friend's friends list
+                    friend.friends.append(user)
                     db.session.commit()
                 else:
                     # If already friends, just mark the request as accepted

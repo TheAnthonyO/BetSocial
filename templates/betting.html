@@ -5,10 +5,10 @@
     <title>Betting - BetSocial</title>
     <style>
         :root {
-            --light-blue: #00bfff;
+            --theme-color: #C49A6C;
             --dark-bg: #000000;
-            --hover-blue: #0099cc;
-            --team-hover: rgba(0, 191, 255, 0.2);
+            --hover-color: #A37B4C;
+            --team-hover: rgba(196, 154, 108, 0.2);
         }
         
         body {
@@ -32,10 +32,10 @@
         }
         
         h1, h2, h3 {
-            color: var(--light-blue);
+            color: var(--theme-color);
             text-align: center;
             margin-bottom: 2rem;
-            text-shadow: 0 0 10px rgba(0, 191, 255, 0.3);
+            text-shadow: 0 0 10px rgba(196, 154, 108, 0.3);
         }
 
         h1 {
@@ -48,61 +48,73 @@
             padding: 1rem;
             background-color: rgba(0, 0, 0, 0.8);
             border-radius: 10px;
-            border: 2px solid var(--light-blue);
+            border: 2px solid var(--theme-color);
         }
 
         .bankroll {
             font-size: 1.5rem;
-            color: var(--light-blue);
+            color: var(--theme-color);
             margin: 1rem 0;
         }
         
         .games-container, .history-container {
             background-color: rgba(0, 0, 0, 0.8);
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 191, 255, 0.2);
-            border: 2px solid var(--light-blue);
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(196, 154, 108, 0.2);
+            border: 2px solid var(--theme-color);
             padding: 2rem;
             margin-bottom: 2rem;
         }
 
         .date-section {
             margin-bottom: 2rem;
-            padding: 1rem;
+            padding: 1.5rem;
             background-color: rgba(0, 0, 0, 0.5);
             border-radius: 10px;
+            border: 1px solid var(--theme-color);
         }
 
         .date-header {
-            color: var(--light-blue);
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
+            color: var(--theme-color);
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
             padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--light-blue);
+            border-bottom: 2px solid var(--theme-color);
+            text-align: center;
         }
 
         table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
             margin: 1rem 0;
             background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            overflow: hidden;
         }
 
         th, td {
-            padding: 1rem;
+            padding: 1.2rem;
             text-align: left;
-            border-bottom: 1px solid var(--light-blue);
+            border-bottom: 1px solid var(--theme-color);
         }
 
         th {
-            color: var(--light-blue);
+            color: var(--theme-color);
             font-weight: bold;
+            font-size: 1.1rem;
+            background-color: rgba(196, 154, 108, 0.1);
+        }
+
+        tr:hover {
+            background-color: rgba(196, 154, 108, 0.05);
         }
 
         .team-container {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.8rem;
+            font-size: 1.1rem;
         }
 
         .team-logo {
@@ -114,7 +126,7 @@
         select {
             padding: 0.5rem;
             margin: 0.5rem;
-            border: 1px solid var(--light-blue);
+            border: 1px solid var(--theme-color);
             border-radius: 5px;
             background-color: rgba(255, 255, 255, 0.1);
             color: white;
@@ -138,19 +150,40 @@
         .betting-form {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 1rem;
             flex-wrap: wrap;
             transition: all 0.3s ease;
+            padding: 1rem;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
         }
 
         .betting-form:hover {
             transform: translateY(-2px);
         }
 
+        .betting-form button {
+            padding: 0.5rem 1.5rem;
+            background-color: var(--theme-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
+        }
+
+        .betting-form button:hover {
+            background-color: var(--hover-color);
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
         input[type="number"] {
             padding: 0.5rem;
             margin: 0.5rem;
-            border: 1px solid var(--light-blue);
+            border: 1px solid var(--theme-color);
             border-radius: 5px;
             background-color: rgba(255, 255, 255, 0.1);
             color: white;
@@ -187,14 +220,33 @@
             text-decoration: none;
         }
 
+        .nav-buttons button {
+            padding: 0.8rem 2rem;
+            background-color: var(--theme-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-buttons button:hover {
+            background-color: var(--hover-color);
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
         .live-game {
-            background-color: rgba(255, 0, 0, 0.1);
-            border: 1px solid #ff0000;
+            background-color: rgba(255, 0, 0, 0.05);
+            border-left: 3px solid #ff0000;
         }
 
         .live-score {
             color: #ff0000;
             font-weight: bold;
+            font-size: 1.1rem;
         }
 
         .game-status {
@@ -207,17 +259,36 @@
         }
 
         .game-status.scheduled {
-            color: var(--light-blue);
+            color: var(--theme-color);
         }
 
         .odds {
-            color: #ffd700;
+            color: #D2B48C;
             font-weight: bold;
+            font-size: 1.1rem;
+            line-height: 1.5;
         }
 
         .time {
             color: #888;
-            font-size: 0.9rem;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .matchup {
+            font-weight: bold;
+        }
+
+        .history-container table {
+            margin-top: 1rem;
+        }
+
+        .history-container th {
+            background-color: rgba(196, 154, 108, 0.15);
+        }
+
+        .history-container td {
+            font-weight: bold;
         }
     </style>
 </head>
@@ -227,7 +298,7 @@
         
         <div class="user-info">
             <h2>Welcome, {{ user.username }}!</h2>
-            <p class="bankroll">Your bankroll: ${{ user.bankroll }}</p>
+            <p class="bankroll">Your bankroll: ${{ "%.2f"|format(user.bankroll) }}</p>
         </div>
 
         {% if error %}
@@ -238,84 +309,75 @@
         {% endif %}
 
         <div class="games-container">
-            <h2>Available Games</h2>
+            <h2>Upcoming Games</h2>
             
-            {% set ns = namespace(current_date=none) %}
-            {% for game in games|sort(attribute='date') %}
-                {% set game_date = game.date.split(' ')[0] %}
-                {% set game_time = game.date.split(' ')[1] %}
-                
-                {% if ns.current_date != game_date %}
-                    {% if ns.current_date %}
-                        </tbody>
+            {% if games %}
+                {% set ns = namespace(current_date=none) %}
+                {% for game in games|sort(attribute='date') %}
+                    {% set game_date = game.date.split(' ')[0] %}
+                    {% set game_time = game.date.split(' ')[1] %}
+                    {% set date_parts = game_date.split('-') %}
+                    {% set month_names = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] %}
+                    {% set month_name = month_names[date_parts[1]|int - 1] %}
+                    {% set formatted_date = month_name ~ ' ' ~ date_parts[2] ~ ' ' ~ date_parts[0] %}
+                    
+                    {% if ns.current_date != game_date %}
+                        {% if ns.current_date %}
+                            </tbody>
                         </table>
                         </div>
+                        {% endif %}
+                        <div class="date-section">
+                            <h3 class="date-header">{{ formatted_date }}</h3>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>Match</th>
+                                        <th>Odds</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                        {% set ns.current_date = game_date %}
                     {% endif %}
                     
-                    <div class="date-section">
-                    <div class="date-header">{{ game_date }}</div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Time (ET)</th>
-                                <th>Matchup</th>
-                                <th>Status</th>
-                                <th>Score</th>
-                                <th>Odds</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                    {% set ns.current_date = game_date %}
-                {% endif %}
-                
-                <tr class="{{ 'live-game' if game.status == 'live' }}">
-                    <td class="time">{{ game_time }}</td>
-                    <td>
-                        <div class="team-container">
-                            {{ game.team1 }} vs {{ game.team2 }}
-                        </div>
-                    </td>
-                    <td>
-                        <span class="game-status {{ game.status }}">
-                            {{ game.status }}
-                        </span>
-                    </td>
-                    <td>
-                        {% if game.status == 'live' and game.score %}
-                            <span class="live-score">
-                                {{ game.score.team1 }} - {{ game.score.team2 }}
-                            </span>
-                        {% else %}
-                            -
-                        {% endif %}
-                    </td>
-                    <td class="odds">
-                        {{ game.team1 }}: {{ "%.2f"|format(game.odds.team1) }}x<br>
-                        {{ game.team2 }}: {{ "%.2f"|format(game.odds.team2) }}x
-                    </td>
-                    <td>
-                        {% if game.status in ['scheduled', 'live'] %}
-                            <form method="POST" action="{{ url_for('betting.betting') }}" class="betting-form">
+                    <tr class="{% if game.status == 'live' %}live-game{% endif %}">
+                        <td class="time">{{ game_time }}</td>
+                        <td>
+                            <div class="team-container matchup">
+                                <span>{{ game.team1 }}</span>
+                                <span>vs</span>
+                                <span>{{ game.team2 }}</span>
+                                {% if game.status == 'live' %}
+                                    <span class="live-score">({{ game.score.team1 }} - {{ game.score.team2 }})</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td class="odds">
+                            {{ game.team1 }}: {{ game.odds.team1 }}x
+                            <br>
+                            {{ game.team2 }}: {{ game.odds.team2 }}x
+                        </td>
+                        <td>
+                            <form class="betting-form" method="POST">
                                 <input type="hidden" name="game_id" value="{{ game.id }}">
-                                <select name="team">
+                                <select name="team" required>
+                                    <option value="">Select Team</option>
                                     <option value="{{ game.team1 }}">{{ game.team1 }}</option>
                                     <option value="{{ game.team2 }}">{{ game.team2 }}</option>
                                 </select>
-                                <input type="number" name="amount" min="1" step="0.01" placeholder="Amount" required>
+                                <input type="number" name="amount" placeholder="Amount" min="1" step="0.01" required>
                                 <button type="submit">Place Bet</button>
                             </form>
-                        {% else %}
-                            <span style="color: #888;">Game {{ game.status }}</span>
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-            
-            {% if games %}
-                </tbody>
+                        </td>
+                    </tr>
+                {% endfor %}
+                {% if ns.current_date %}
+                    </tbody>
                 </table>
                 </div>
+                {% endif %}
             {% else %}
                 <p style="text-align: center; color: #888;">No games available at the moment.</p>
             {% endif %}
@@ -331,7 +393,6 @@
                         <th>Amount</th>
                         <th>Odds</th>
                         <th>Result</th>
-                        <th>Vs</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -343,7 +404,6 @@
                                 <td>${{ "%.2f"|format(bet.amount) }}</td>
                                 <td>{{ "%.2f"|format(bet.odds) }}x</td>
                                 <td>{{ bet.result_description }}</td>
-                                <td>{{ bet.opponent_username }}</td>
                             </tr>
                         {% endif %}
                     {% endfor %}
@@ -357,18 +417,24 @@
     </div>
 
     <script>
-        // Auto-refresh games every 30 seconds
+        // Only refresh if there are live games
+        function shouldRefresh() {
+            const liveGames = document.querySelectorAll('.live-game');
+            return liveGames.length > 0;
+        }
+
+        // Auto-refresh every 30 seconds only if there are live games
         setInterval(function() {
-            fetch('/api/games')
-                .then(response => response.json())
-                .then(games => {
-                    if (games.error) {
-                        console.error('Error fetching games:', games.error);
-                        return;
-                    }
-                    location.reload();
-                })
-                .catch(error => console.error('Error:', error));
+            if (shouldRefresh()) {
+                fetch('/api/games')
+                    .then(response => response.json())
+                    .then(games => {
+                        if (!games.error) {
+                            location.reload();
+                        }
+                    })
+                    .catch(error => console.error('Error refreshing games:', error));
+            }
         }, 30000);
     </script>
 </body>

@@ -5,7 +5,7 @@
     <title>Register - BetSocial</title>
     <style>
         :root {
-            --light-blue: #00bfff;
+            --theme-color: #C49A6C;
             --dark-bg: #000000;
         }
         
@@ -34,11 +34,10 @@
             padding: 2rem;
         }
         
-        .basketball-image {
-            max-width: 80%;
+        .logo {
+            width: 400px;
             height: auto;
-            object-fit: contain;
-            opacity: 0.9;
+            margin-bottom: 2rem;
         }
         
         .register-section {
@@ -52,10 +51,10 @@
         }
         
         h1 {
-            color: var(--light-blue);
+            color: var(--theme-color);
             margin-bottom: 2rem;
             font-size: 2.5rem;
-            text-shadow: 0 0 10px rgba(0, 191, 255, 0.3);
+            text-shadow: 0 0 10px rgba(196, 154, 108, 0.3);
         }
         
         .form-container {
@@ -64,15 +63,15 @@
             padding: 2rem;
             background-color: rgba(0, 0, 0, 0.8);
             border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 191, 255, 0.2);
-            border: 2px solid var(--light-blue);
+            box-shadow: 0 0 20px rgba(196, 154, 108, 0.2);
+            border: 2px solid var(--theme-color);
         }
         
         input {
             width: 100%;
             padding: 12px;
             margin: 8px 0;
-            border: 1px solid var(--light-blue);
+            border: 1px solid var(--theme-color);
             border-radius: 5px;
             background-color: rgba(255, 255, 255, 0.1);
             color: white;
@@ -83,7 +82,7 @@
         input:focus {
             outline: none;
             border-color: white;
-            box-shadow: 0 0 10px rgba(0, 191, 255, 0.3);
+            box-shadow: 0 0 10px rgba(196, 154, 108, 0.3);
         }
         
         button {
@@ -92,7 +91,7 @@
             margin: 8px 0;
             border: none;
             border-radius: 5px;
-            background-color: var(--light-blue);
+            background-color: var(--theme-color);
             color: white;
             cursor: pointer;
             font-weight: bold;
@@ -100,12 +99,12 @@
         }
         
         button:hover {
-            background-color: #0099cc;
+            background-color: #A37B4C;
             transform: translateY(-2px);
         }
         
         a {
-            color: var(--light-blue);
+            color: var(--theme-color);
             text-decoration: none;
             transition: color 0.3s;
         }
@@ -124,7 +123,7 @@
 <body>
     <div class="container">
         <div class="image-section">
-            <img src="{{ url_for('static', filename='images/basketball.jpg') }}" alt="Basketball" class="basketball-image">
+            <img src="{{ url_for('static', filename='images/BetSocialLogo.png') }}" alt="BetSocial Logo" class="logo">
         </div>
         <div class="register-section">
             <h1>Create Account</h1>

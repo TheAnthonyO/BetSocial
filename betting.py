@@ -64,42 +64,87 @@ def get_all_games():
 # Route for the betting page, handling both GET (display) and POST (bet placement)
 @betting_bp.route('/betting', methods=['GET', 'POST'])
 def betting():
-    print("Betting route accessed")  # Debug log
-    # Redirect to home if user isn't logged in
     if 'username' not in session:
         return redirect(url_for('login.home'))
-    # Fetch the current user
+    
     user = User.query.filter_by(username=session['username']).first()
-    # Convert dynamic friends query to a list to ensure it's fully loaded
     friends_list = list(user.friends.all())
     error = None
     success = None
+    api_error = None
 
-    # Check and settle any completed games
     betting_system.check_and_settle_completed_games()
 
-    if request.method == 'POST':
-        team = request.form['team']
-        amount = float(request.form['amount'])
-        game_id = int(request.form['game_id'])
-        
-        # Get current games from API
+    try:
         all_games = get_all_games()
-        
-        # Find the game and its odds
-        game = next((g for g in all_games if g['id'] == game_id), None)
-        if not game:
-            error = "Game not found."
-        elif game['status'] not in ['scheduled', 'live']:
-            error = "Cannot bet on games that are not scheduled or live."
+    except Exception as e:
+        if "Usage quota has been reached" in str(e):
+            api_error = "The odds service is currently unavailable. Please try again later."
         else:
-            # Determine odds based on team selection
-            odds = game['odds']['team1'] if team == game['team1'] else game['odds']['team2']
-            bet = betting_system.place_bet(user, team, amount, odds, 'solo', None, game_id)
-            if not bet:
-                error = "Insufficient funds."
+            api_error = "An error occurred while fetching games. Please try again later."
+        all_games = []
+
+    if request.method == 'POST':
+        try:
+            print(f"Form data: {request.form}")  # Debug log
+            
+            # Validate and get team
+            team = request.form.get('team')
+            if not team:
+                raise ValueError("Team selection is required")
+            
+            # Validate and get amount
+            amount_str = request.form.get('amount')
+            if not amount_str:
+                raise ValueError("Amount is required")
+            try:
+                amount = float(amount_str)
+                if amount <= 0:
+                    raise ValueError("Amount must be greater than 0")
+            except ValueError as e:
+                raise ValueError(f"Invalid amount format: {amount_str}")
+            
+            # Validate and get game_id
+            game_id = request.form.get('game_id')
+            if not game_id:
+                raise ValueError("Game ID is required")
+            
+            print(f"Processing bet - Team: {team}, Amount: {amount}, Game ID: {game_id}")  # Debug log
+            
+            # Get current games from API
+            all_games = get_all_games()
+            print(f"Total games found: {len(all_games)}")  # Debug log
+            
+            # Find the game and its odds
+            game = next((g for g in all_games if g['id'] == game_id), None)
+            if not game:
+                error = "Game not found."
+                print(f"Game not found for ID: {game_id}")  # Debug log
+            elif game['status'] not in ['scheduled', 'live']:
+                error = "Cannot bet on games that are not scheduled or live."
+                print(f"Invalid game status: {game['status']}")  # Debug log
             else:
-                success = f"Bet placed successfully on {team} with {odds}x odds!"
+                # Determine odds based on team selection
+                try:
+                    odds = game['odds']['team1'] if team == game['team1'] else game['odds']['team2']
+                    print(f"Selected odds: {odds}")  # Debug log
+                    
+                    bet = betting_system.place_bet(user, team, amount, odds, 'solo', None, game_id)
+                    if not bet:
+                        error = "Insufficient funds."
+                        print(f"Insufficient funds for user: {user.username}")  # Debug log
+                    else:
+                        success = f"Bet placed successfully on {team} with {odds}x odds!"
+                        print(f"Bet placed successfully: {bet.id}")  # Debug log
+                except KeyError as e:
+                    error = f"Error processing odds: {str(e)}"
+                    print(f"Error processing odds: {str(e)}")  # Debug log
+        except ValueError as e:
+            error = f"Invalid input: {str(e)}"
+            print(f"ValueError occurred: {str(e)}")  # Debug log
+        except Exception as e:
+            error = f"An error occurred: {str(e)}"
+            print(f"Unexpected error: {str(e)}")  # Debug log
 
     # Fetch all bets for display
     bets = Bet.query.all()
@@ -127,20 +172,14 @@ def betting():
             'game_info': game_info
         })
 
-    # Get current games from API
-    print("Fetching games from API...")  # Debug log
-    all_games = get_all_games()
-    print(f"Total games found: {len(all_games)}")  # Debug log
-    print(f"Live games: {len([g for g in all_games if g['status'] == 'live'])}")  # Debug log
-    print(f"Upcoming games: {len([g for g in all_games if g['status'] == 'scheduled'])}")  # Debug log
-
     return render_template('betting.html', 
                          user=user, 
                          bets=bet_data, 
                          friends=friends_list, 
                          error=error,
                          success=success,
-                         games=all_games)
+                         games=all_games,
+                         api_error=api_error)
 
 # Route to get updated games data (for AJAX updates)
 @betting_bp.route('/api/games', methods=['GET'])

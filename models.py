@@ -30,9 +30,15 @@ class User(db.Model):
 
     # Method to update the user's bankroll (positive for deposit/win, negative for withdrawal/bet)
     def update_bankroll(self, amount):
-        self.bankroll += amount
-        # Reset to 500 if bankroll drops to 0 or below
-        if self.bankroll <= 0:
+        # For withdrawals (positive amount), subtract from bankroll
+        if amount > 0:
+            self.bankroll -= amount
+        # For deposits or winnings (negative amount), add to bankroll
+        else:
+            self.bankroll += abs(amount)
+        
+        # Only reset to 500 if bankroll drops to 0 or below due to a bet
+        if self.bankroll <= 0 and amount < 0:
             self.bankroll = 500
         db.session.commit()
 

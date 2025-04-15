@@ -72,24 +72,18 @@ def register():
 # Route to handle deposit and withdrawal actions (POST only)
 @login_bp.route('/deposit_withdraw', methods=['POST'])
 def deposit_withdraw():
-    # Ensure user is logged in
     if 'username' not in session:
         return redirect(url_for('login.home'))
-    # Fetch the current user
-    user = User.query.filter_by(username=session['username']).first()
-    # Get the amount and action (deposit or withdraw) from the form
-    amount = float(request.form['amount'])
-    action = request.form['action']
     
-    # If depositing, increase the bankroll
+    user = User.query.filter_by(username=session['username']).first()
+    amount = float(request.form.get('amount', 0))
+    action = request.form.get('action')
+    
     if action == 'deposit':
-        user.update_bankroll(amount)
-    # If withdrawing, check funds and decrease bankroll if sufficient
+        user.update_bankroll(-amount)  # Pass negative amount for deposit
+        return redirect(url_for('login.home'))
     elif action == 'withdraw':
         if user.bankroll >= amount:
-            user.update_bankroll(-amount)
-        else:
-            return "Insufficient funds for withdrawal."
-    
-    # Redirect back to the homepage after processing
-    return redirect(url_for('login.home'))
+            user.update_bankroll(amount)  # Pass positive amount for withdrawal
+            return redirect(url_for('login.home'))
+        return "Insufficient funds for withdrawal."
