@@ -1,0 +1,103 @@
+@startuml
+skinparam backgroundColor white
+skinparam classBackgroundColor white
+skinparam classBorderColor black
+skinparam shadowing false
+
+package "App" {
+  class App {
+    +Flask app
+    +db: SQLAlchemy
+    +register_blueprints()
+  }
+}
+
+class User {
+  +id: int
+  +username: str
+  +password: str
+  +bankroll: float
+  +update_bankroll(amount)
+}
+
+class Message {
+  +id: int
+  +sender_id: int
+  +receiver_id: int
+  +content: str
+  +timestamp: datetime
+}
+
+class Bet {
+  +id: int
+  +user_id: int
+  +team: str
+  +amount: float
+  +odds: float
+  +game_id: str
+  +result: str
+  +result_description: str
+  +bet_type: str
+  +opponent_id: int
+}
+
+class FriendRequest {
+  +id: int
+  +sender_id: int
+  +receiver_id: int
+  +status: str
+}
+
+package "Blueprints" {
+  class LoginBlueprint {
+    +home()
+    +login()
+    +register()
+    +logout()
+    +deposit_withdraw()
+  }
+
+  class FriendsBlueprint {
+    +friends()
+  }
+
+  class BettingBlueprint {
+    +betting()
+    +get_games()
+  }
+}
+
+package "External API" {
+  class OddsAPI {
+    +get_live_games()
+    +get_upcoming_games()
+    +_get_best_odds()
+  }
+}
+
+package "Templates" {
+  class IndexHtml
+  class FriendsHtml
+  class BettingHtml
+  class RegisterHtml
+}
+
+App --> LoginBlueprint : uses
+App --> FriendsBlueprint : uses
+App --> BettingBlueprint : uses
+
+LoginBlueprint --> IndexHtml : renders
+LoginBlueprint --> RegisterHtml : renders
+FriendsBlueprint --> FriendsHtml : renders
+BettingBlueprint --> BettingHtml : renders
+
+BettingBlueprint ..> OddsAPI : calls
+
+User --> Message : sends/receives
+User --> Bet : places
+User --> FriendRequest : sends/receives
+
+LoginBlueprint ..> User : accesses session
+FriendsBlueprint ..> User : interacts
+BettingBlueprint ..> User : interacts
+@enduml
